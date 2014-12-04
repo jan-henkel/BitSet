@@ -452,7 +452,7 @@ int BitSetsMainWindow::parseCommand(QString &str)
         return 0;
     }
 
-    printToConsole("Error: Valid command expected.");
+    printError("Valid command expected.");
     return -1;
 }
 
