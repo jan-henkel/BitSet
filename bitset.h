@@ -76,10 +76,10 @@ public:
     int lowest() const;
     int indexOf(int element) const;
     operator QString() const;
+    void resize(int newMaxSize,bool preserve);
 
-    BitSetIterator begin() const{int h=highest(); BitSetIterator b(this,h,content[h/(8*sizeof(int))]); return b;}
+    BitSetIterator begin() const{int h=highest(); BitSetIterator b(this,h,h>=0?content[h/(8*sizeof(int))]:0); return b;}
     BitSetIterator end() const{BitSetIterator b(this,-1,0); return b;}
-
 private:
     int nArraySizeInBits;
     int nArrayLength;

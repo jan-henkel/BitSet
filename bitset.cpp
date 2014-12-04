@@ -395,4 +395,38 @@ void BitSet::setRange(int lower, int upper, int step)
         add(i);
 }
 
+void BitSet::resize(int newMaxSize, bool preserve)
+{
+    int nNewArrayLength=(newMaxSize/(sizeof(int)*8)+((newMaxSize%(sizeof(int)*8))!=0));
+    if(nNewArrayLength!=nArrayLength)
+    {
+        int* newContent=new int[nNewArrayLength];
+        int minLength=nNewArrayLength>nArrayLength?nArrayLength:nNewArrayLength;
+        if(preserve)
+        {
+            for(int i=0;i<minLength;++i)
+                newContent[i]=content[i];
+            for(int i=minLength;i<nNewArrayLength;++i)
+                newContent[i]=0;
+        }
+        else
+        {
+            for(int i=0;i<nNewArrayLength;++i)
+                newContent[i]=0;
+            nSize=0;
+            sizeChanged=false;
+        }
+        delete[] content;
+        content=newContent;
+        nArrayLength=nNewArrayLength;
+        nArraySizeInBits=nNewArrayLength*sizeof(int)*8;
+    }
+    if(preserve && newMaxSize<nMaxSize)
+    {
+        content[nArrayLength-1]&=(1<<(newMaxSize%(sizeof(int)*8)))-1;
+        sizeChanged=true;
+    }
+    nMaxSize=newMaxSize;
+}
+
 #endif

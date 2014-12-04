@@ -15,9 +15,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         bitsetsmainwindow.cpp \
-    bitset.cpp
+    bitset.cpp \
+    consoleinputtextedit.cpp
 
 HEADERS  += bitsetsmainwindow.h \
-    bitset.h
+    bitset.h \
+    consoleinputtextedit.h
 
 FORMS    += bitsetsmainwindow.ui
