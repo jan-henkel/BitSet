@@ -35,8 +35,8 @@ BitSetsMainWindow::BitSetsMainWindow(QWidget *parent) :
     printToConsole("All binary operators are resolved from left to right (no operator precedence, binding levels).");
     printToConsole("Entering "+FORMATTING_COMMAND_PRE+"#SET_EXPRESSION"+FORMATTING_COMMAND_POST+" yields the number of elements of the set described by "+FORMATTING_HIGHLIGHT_PRE+"SET_EXPRESSION."+FORMATTING_HIGHLIGHT_POST);
     printToConsole(FORMATTING_COMMAND_PRE+"#max=NUMBER"+FORMATTING_COMMAND_POST+" defines a new strict upper bound. "+FORMATTING_HIGHLIGHT_PRE+"NUMBER"+FORMATTING_HIGHLIGHT_POST+" must be less than or equal to "+QString::number(MAX_UPPER_BOUND)+". "+FORMATTING_COMMAND_PRE+"#max"+FORMATTING_COMMAND_POST+" yields the current strict upper bound.");
-    printToConsole("Entering an "+FORMATTING_COMMAND_PRE+"IDENTIFIER"+FORMATTING_COMMAND_POST+" yields the content of the corresponding set.");
-    printToConsole("<br>Example:<br><br>"+FORMATTING_COMMAND_PRE+"A={1,2,9}"+FORMATTING_COMMAND_POST+"<br>"+FORMATTING_COMMAND_PRE+"B={5,6,9}"+FORMATTING_COMMAND_POST+"<br>"+FORMATTING_COMMAND_PRE+"C=A^B+{71}"+FORMATTING_COMMAND_POST+"<br><br>yields C={1,2,5,6,71}.<br>"+FORMATTING_COMMAND_PRE+"#C"+FORMATTING_COMMAND_POST+" yields 5<br><br>"+FORMATTING_COMMAND_PRE+"D=~C&{1,2,3}"+FORMATTING_COMMAND_POST+" yields D={3}");
+    printToConsole("Entering an "+FORMATTING_HIGHLIGHT_PRE+"IDENTIFIER"+FORMATTING_HIGHLIGHT_POST+" or a "+FORMATTING_HIGHLIGHT_PRE+"SET_EXPRESSION"+FORMATTING_HIGHLIGHT_POST+" yields the content of the corresponding set.");
+    printToConsole("<br>Example:<br><br>"+FORMATTING_COMMAND_PRE+"A={1,2,9}"+FORMATTING_COMMAND_POST+"<br>"+FORMATTING_COMMAND_PRE+"B={5,6,9}"+FORMATTING_COMMAND_POST+"<br>"+FORMATTING_COMMAND_PRE+"C=A^B+{71}"+FORMATTING_COMMAND_POST+"<br><br>yields C={1,2,5,6,71}.<br>"+FORMATTING_COMMAND_PRE+"#C"+FORMATTING_COMMAND_POST+" yields 5<br><br>"+FORMATTING_COMMAND_PRE+"~C&{1,2,3}"+FORMATTING_COMMAND_POST+" yields {3}");
 }
 
 BitSetsMainWindow::~BitSetsMainWindow()
@@ -417,11 +417,11 @@ int BitSetsMainWindow::parseNewUpperBound(QString &str)
 
 int BitSetsMainWindow::parseCommand(QString &str)
 {
-    if(str=="commands")
+    /*if(str=="commands")
     {
         static int easteregg=0;
         if(easteregg==0)
-            printToConsole("<font face='Comic Sans MS'>Looks like have ourselves a comedian.</font>");
+            printToConsole("<font face='Comic Sans MS'>Looks like we have ourselves a comedian.</font>");
         if(easteregg==1)
             printToConsole("Repetition might be one of the elements of humor, but you can stop now.");
         if(easteregg==2)
@@ -431,7 +431,7 @@ int BitSetsMainWindow::parseCommand(QString &str)
         }
         easteregg++;
         return -1;
-    }
+    }*/
     if(str.contains("#max="))
         return parseNewUpperBound(str);
     if(str=="#max")
@@ -448,10 +448,23 @@ int BitSetsMainWindow::parseCommand(QString &str)
     {
         int setIndex=parseSetIdentifier(str);
         if(setIndex!=-1)
+        {
             printToConsole(QString(QChar(((QChar)'A').unicode()+setIndex))+"="+bitSets[setIndex]);
-        return 0;
+            return 0;
+        }
+        return -1;
     }
-
+    if(str.length()>1)
+    {
+        BitSet set;
+        int ok=parseSetExpression(str,set);
+        if(ok!=-1)
+        {
+            printToConsole("="+set);
+            return 0;
+        }
+        return -1;
+    }
     printError("Valid command expected.");
     return -1;
 }
