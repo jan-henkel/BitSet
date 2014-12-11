@@ -36,6 +36,7 @@ public:
     void applyBinaryOperator(int binaryOperator,BitSet &set, const BitSet &other);
     void applyUnaryOperator(int unaryOperator,BitSet &set);
     void applyAssignmentOperator(int assignmentOperator,BitSet &set, const BitSet &other);
+
 private slots:
     void receivedConsoleCommand(const QString &str);
     void quit();
